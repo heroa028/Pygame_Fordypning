@@ -15,7 +15,7 @@ clock = pygame.time.Clock()
 BG = (30, 30, 30)
 PLAYER_COLOR = (0, 200, 255)
 BULLET_COLOR = (255, 50, 50)
-BUTTON_COLOR = (70, 130, 180)
+BUTTON_COLOR = (128, 0, 128)
 HOVER_COLOR = (100, 170, 220)
 TEXT_COLOR = (255, 255, 255)
 
@@ -35,7 +35,7 @@ player = pygame.Rect(WIDTH // 2, HEIGHT // 2, player_radius * 2 , player_radius 
 
 # Bullets list
 bullets = []
-bullet_speed = 8
+bullet_speed = 12
 bullet_radius = 4
 
 # Variables
@@ -65,9 +65,9 @@ class Button:
 
 # Create buttons
 buttons = [
-    Button("Play", 200, 120, 200, 50),
-    Button("Options", 200, 190, 200, 50),
-    Button("Quit", 200, 260, 200, 50)
+    Button("Play", 600, 120, 300, 70),
+    Button("Options", 600, 220, 300, 70),
+    Button("Quit", 600, 320, 300, 70)
 ]
 
 # Game loop
@@ -108,7 +108,7 @@ while True:
         if keys[pygame.K_w]:
                 player_y -= speed
         if keys[pygame.K_s]:
-                player_y += speed
+                player_y += speed   
         if keys[pygame.K_d]:
                 player_x += speed
         if keys[pygame.K_a]:
