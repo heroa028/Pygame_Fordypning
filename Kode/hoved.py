@@ -15,6 +15,13 @@ clock = pygame.time.Clock()
 BG = (30, 30, 30)
 PLAYER_COLOR = (0, 200, 255)
 BULLET_COLOR = (255, 50, 50)
+BUTTON_COLOR = (70, 130, 180)
+HOVER_COLOR = (100, 170, 220)
+TEXT_COLOR = (255, 255, 255)
+
+# Font
+font = pygame.font.SysFont(None, 36)
+
 
 
 # Player
@@ -31,12 +38,56 @@ bullets = []
 bullet_speed = 8
 bullet_radius = 4
 
+# Variables
+Meny = True
+
+# Button class
+class Button:
+    def __init__(self, text, x, y, w, h):
+        self.text = text
+        self.rect = pygame.Rect(x, y, w, h)
+
+    def draw(self, surface):
+        color = HOVER_COLOR if self.rect.collidepoint(pygame.mouse.get_pos()) else BUTTON_COLOR
+        pygame.draw.rect(surface, color, self.rect)
+        pygame.draw.rect(surface, (0, 0, 0), self.rect, 2)
+
+        text_surf = font.render(self.text, True, TEXT_COLOR)
+        text_rect = text_surf.get_rect(center=self.rect.center)
+        surface.blit(text_surf, text_rect)
+
+    def clicked(self, event):
+        return (
+            event.type == pygame.MOUSEBUTTONDOWN
+            and event.button == 1
+            and self.rect.collidepoint(event.pos)
+        )
+
+# Create buttons
+buttons = [
+    Button("Play", 200, 120, 200, 50),
+    Button("Options", 200, 190, 200, 50),
+    Button("Quit", 200, 260, 200, 50)
+]
+
 # Game loop
 while True:
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        if Meny == True:
+            for button in buttons:
+                if button.clicked(event):
+                    print(f"{button.text} clicked!")
+
+                    if button.text == "Quit":
+                        pygame.quit()
+                        sys.exit()
+                    if button.text == "Play":
+                        Meny = False
+    if Meny == False:    
         # Shoot bullet on mouse click
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:  # Left click
@@ -77,9 +128,13 @@ while True:
     
     # Draw
     screen.fill(BG)
+    if Meny:
+        for button in buttons:
+            button.draw(screen)
 
     # Player
-    pygame.draw.circle(screen, PLAYER_COLOR, player_pos, player_radius)
+    if Meny == False:
+        pygame.draw.circle(screen, PLAYER_COLOR, player_pos, player_radius)
 
      # Keep square on screen
     player_x = max(0, min(WIDTH - player_radius, player_x))
