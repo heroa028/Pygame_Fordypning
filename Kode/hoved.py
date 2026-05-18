@@ -29,7 +29,7 @@ player = pygame.Rect(WIDTH // 2, HEIGHT // 2, player_radius * 2 , player_radius 
 # Bullets list
 bullets = []
 bullet_speed = 8
-bullet_radius = 5
+bullet_radius = 4
 
 # Game loop
 while True:
