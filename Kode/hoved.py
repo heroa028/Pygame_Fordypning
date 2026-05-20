@@ -1,18 +1,21 @@
+#Dette importerer og starter alle pygame systemer som, lys display, input etc. 
 import pygame
 import sys
 import math
 import random
 
-
+#Loader inn "bibliotekene"
 pygame.init()
 
 # Screen
+#Disse lager wdindowet på den satte resolusjonen, og setter caption og clock setter fpsen. 
 WIDTH, HEIGHT = 1440, 920
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Shoot with Mouse og beveg wasd")
 clock = pygame.time.Clock()
 
-# Colors
+# Colors¨
+#Lagrer rgb verdier til forskjellige ting som skal ha farger
 BG = (30, 30, 30)
 PLAYER_COLOR = (0, 200, 255)
 BULLET_COLOR = (255, 50, 50)
@@ -20,16 +23,16 @@ BUTTON_COLOR = (128, 0, 128)
 HOVER_COLOR = (100, 170, 220)
 TEXT_COLOR = (255, 255, 255)
 
-# Font
+# Denne loader defualt fonten i str 36
+
 font = pygame.font.SysFont(None, 36)
 
-#Enemies
-all_sprites = pygame.sprite.Group()
+#Enemies. 
 enemies = []
-wave = 1
-enemies_to_spawn = 8
-spawn_timer = 0
-SPAWN_INTERVAL = 60
+wave = 1  # Wave setter hvilken wave man starter på. 
+enemies_to_spawn = 8  # Enemies_to_spawn setter hvor mange som spawner på første wave (etter det blir det flere og flere (5+ wave nummer * 3))
+spawn_timer = 0  # spawn_timer teller hvor mange frames siden siste spawn
+SPAWN_INTERVAL = 60  # spawner en fiende hvert 60/60fps aka 1 sek
 
 
 # Player
