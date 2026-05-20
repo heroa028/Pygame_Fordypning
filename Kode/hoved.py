@@ -1,6 +1,7 @@
 import pygame
 import sys
 import math
+import random
 
 
 pygame.init()
@@ -22,6 +23,13 @@ TEXT_COLOR = (255, 255, 255)
 # Font
 font = pygame.font.SysFont(None, 36)
 
+#Enemies
+all_sprites = pygame.sprite.Group()
+enemies = []
+wave = 1
+enemies_to_spawn = 8
+spawn_timer = 0
+SPAWN_INTERVAL = 60
 
 
 # Player
@@ -62,6 +70,41 @@ class Button:
             and event.button == 1
             and self.rect.collidepoint(event.pos)
         )
+
+def spawn_enemy():
+    side = random.choice(["top", "bottom", "left", "right"])
+    if side == "top":    x, y = random.randint(0, WIDTH), -20
+    if side == "bottom": x, y = random.randint(0, WIDTH), HEIGHT + 20
+    if side == "left":   x, y = -20, random.randint(0, HEIGHT)
+    if side == "right":  x, y = WIDTH + 20, random.randint(0, HEIGHT)
+    enemies.append({"x": float(x), "y": float(y), "radius": 15, "speed": 2})
+
+def wave_update():
+    global enemies_to_spawn, spawn_timer, wave
+    if enemies_to_spawn > 0:
+        spawn_timer += 1
+        if spawn_timer >= SPAWN_INTERVAL:
+            spawn_enemy()
+            enemies_to_spawn -= 1
+            spawn_timer = 0
+    elif len(enemies) == 0:
+        wave += 1
+        enemies_to_spawn = 5 + wave * 3
+
+# Flytter hver fiende mot spillerens posisjon
+def update_enemies():
+    for e in enemies:
+        dx = player_pos[0] - e["x"]
+        dy = player_pos[1] - e["y"]
+        dist = math.hypot(dx, dy)
+        if dist != 0:
+            e["x"] += (dx / dist) * e["speed"]
+            e["y"] += (dy / dist) * e["speed"]
+
+# Tegner hver fiende på skjermen
+def draw_enemies():
+    for e in enemies:
+        pygame.draw.circle(screen, (220, 50, 50), (int(e["x"]), int(e["y"])), e["radius"])
 
 # Create buttons
 buttons = [
@@ -122,10 +165,10 @@ while True:
         if (bullet["pos"][0] < 0 or bullet["pos"][0] > WIDTH or
             bullet["pos"][1] < 0 or bullet["pos"][1] > HEIGHT):
             bullets.remove(bullet)
-
-        
-
     
+    wave_update()
+    update_enemies()  # Oppdaterer posisjonen til alle fiender
+
     # Draw
     screen.fill(BG)
     if Meny:
@@ -135,6 +178,10 @@ while True:
     # Player
     if Meny == False:
         pygame.draw.circle(screen, PLAYER_COLOR, player_pos, player_radius)
+        draw_enemies()  # Tegner alle fiender
+        #Enemies
+        font = pygame.font.SysFont(None, 36)
+        screen.blit(font.render(f"Wave {wave}  Enemies: {len(enemies)}", True, (255,255,255)), (10, 10))
 
      # Keep square on screen
     player_x = max(0, min(WIDTH - player_radius, player_x))
