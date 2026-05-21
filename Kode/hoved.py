@@ -11,7 +11,7 @@ pygame.init()
 #Disse lager wdindowet på den satte resolusjonen, og setter caption og clock setter fpsen. 
 WIDTH, HEIGHT = 1440, 920
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Shoot with Mouse og beveg wasd")
+pygame.display.set_caption("Leo må rapes")
 clock = pygame.time.Clock()
 
 # Colors¨
@@ -36,28 +36,30 @@ SPAWN_INTERVAL = 60  # spawner en fiende hvert 60/60fps aka 1 sek
 
 
 # Player
-player_pos = [WIDTH // 2, HEIGHT // 2]
-player_radius = 20
-speed = 5
-player_x = WIDTH // 2
-player_y = HEIGHT // 2
+player_pos = [WIDTH // 2, HEIGHT // 2] #Dette er posisjonen spilleren spawner på
+player_radius = 20 #Radiusen til spilleren
+speed = 5 #Hvor mange piksler den beveger seg per frame
+player_x = WIDTH // 2 # x posisjonen
+player_y = HEIGHT // 2 # y posisjonen
 
 player = pygame.Rect(WIDTH // 2, HEIGHT // 2, player_radius * 2 , player_radius * 2)
 
 # Bullets list
-bullets = []
-bullet_speed = 12
-bullet_radius = 4
+bullets = [] 
+bullet_speed = 12 # pixler hver frame
+bullet_radius = 4 # radiusen på kulen
 
 # Variables
 Meny = True
 
 # Button class
+ # Lagrer tekst og lager en rect for område til MENYEN
 class Button:
-    def __init__(self, text, x, y, w, h):
+    def __init__(self, text, x, y, w, h): 
         self.text = text
         self.rect = pygame.Rect(x, y, w, h)
 
+# lager knappene, gjør de lilla men blå på "Hover"
     def draw(self, surface):
         color = HOVER_COLOR if self.rect.collidepoint(pygame.mouse.get_pos()) else BUTTON_COLOR
         pygame.draw.rect(surface, color, self.rect)
@@ -67,21 +69,21 @@ class Button:
         text_rect = text_surf.get_rect(center=self.rect.center)
         surface.blit(text_surf, text_rect)
 
+# Gjør den True hvis man venstre klikker mens man er over knappen
     def clicked(self, event):
         return (
             event.type == pygame.MOUSEBUTTONDOWN
             and event.button == 1
             and self.rect.collidepoint(event.pos)
         )
-
+# Her velger den en random del av kanten til skjermen. hver fiende/enemy har x og y verdi, radius og speed. 
 def spawn_enemy():
     side = random.choice(["top", "bottom", "left", "right"])
     if side == "top":    x, y = random.randint(0, WIDTH), -20
     if side == "bottom": x, y = random.randint(0, WIDTH), HEIGHT + 20
     if side == "left":   x, y = -20, random.randint(0, HEIGHT)
     if side == "right":  x, y = WIDTH + 20, random.randint(0, HEIGHT)
-    enemies.append({"x": float(x), "y": float(y), "radius": 15, "speed": 2})
-
+    # Denne kjører hver eneste frame og hvis det forsatt er noen fiender som må spawne så teller den hvor mange frames mellom hver spawn. den sjekker også om "Waven" er ferdig og hvis den er det lager den en ny kø med flere fiender for neste "wave"
 def wave_update():
     global enemies_to_spawn, spawn_timer, wave
     if enemies_to_spawn > 0:
@@ -94,7 +96,7 @@ def wave_update():
         wave += 1
         enemies_to_spawn = 5 + wave * 3
 
-# Flytter hver fiende mot spillerens posisjon
+# Flytter hver fiende mot spillerens posisjon. Denne kjører også hver eneste frame. 
 def update_enemies():
     for e in enemies:
         dx = player_pos[0] - e["x"]
@@ -105,11 +107,12 @@ def update_enemies():
             e["y"] += (dy / dist) * e["speed"]
 
 # Tegner hver fiende på skjermen
+# Denne går gjennom alle fiender og tegner en rød sirkel på posisjonen dems. 
 def draw_enemies():
     for e in enemies:
         pygame.draw.circle(screen, (220, 50, 50), (int(e["x"]), int(e["y"])), e["radius"])
 
-# Create buttons
+# Denne lager knapper på forskjellige "Kordinater" på siden med ulik bredde og høyde. (y,x,bredde,høyde)
 buttons = [
     Button("Play", 600, 120, 300, 70),
     Button("Options", 600, 220, 300, 70),
@@ -117,8 +120,9 @@ buttons = [
 ]
 
 # Game loop
+# Her kjører alt på 60fps og alt som er under skjer hver eneste frame (60 ganger i sekundet)
 while True:
-
+# for event in pygame.event.get(): sjekker for ting som skjer i framen den sjekker. feks museknapp, keyboard, eller krysse ut vinduet. 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -150,6 +154,7 @@ while True:
 
 
     # Keybinds
+    # Sier seg selv litt men endrer x/y verdien når man klikker en viss tast 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
                 player_y -= speed
@@ -160,30 +165,31 @@ while True:
         if keys[pygame.K_a]:
                 player_x -= speed
     # Move bullets
+    # Denne beveger kulene i riktig retining og sletter de når de forsvinner av skjermen. 
     for bullet in bullets[:]:
         bullet["pos"][0] += bullet["dir"][0] * bullet_speed
         bullet["pos"][1] += bullet["dir"][1] * bullet_speed 
 
-        # Remove bullets off-screen
+        # fjerner kulene når de forsvinner av skjermen
         if (bullet["pos"][0] < 0 or bullet["pos"][0] > WIDTH or
             bullet["pos"][1] < 0 or bullet["pos"][1] > HEIGHT):
             bullets.remove(bullet)
     
-    wave_update()
+    wave_update()    # håndterer "spawningen" og "wave" systemet 
     update_enemies()  # Oppdaterer posisjonen til alle fiender
 
     # Draw
-    screen.fill(BG)
+    screen.fill(BG) # lager bakgrunnen med fargen (BG)
     if Meny:
         for button in buttons:
-            button.draw(screen)
+            button.draw(screen) # Lager meny knappene
 
     # Player
     if Meny == False:
-        pygame.draw.circle(screen, PLAYER_COLOR, player_pos, player_radius)
+        pygame.draw.circle(screen, PLAYER_COLOR, player_pos, player_radius) # Tegner spilleren
         draw_enemies()  # Tegner alle fiender
         #Enemies
-        font = pygame.font.SysFont(None, 36)
+        font = pygame.font.SysFont(None, 36) # tegner teksten for hvilken wave det er / hvor mange fiender det er
         screen.blit(font.render(f"Wave {wave}  Enemies: {len(enemies)}", True, (255,255,255)), (10, 10))
 
      # Keep square on screen
