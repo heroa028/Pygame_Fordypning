@@ -164,6 +164,14 @@ while True:
                 player_x += speed
         if keys[pygame.K_a]:
                 player_x -= speed
+        if keys[pygame.K_UP]:
+                player_y -= speed
+        if keys[pygame.K_DOWN]:
+                player_y += speed   
+        if keys[pygame.K_RIGHT]:
+                player_x += speed
+        if keys[pygame.K_LEFT]:
+                player_x -= speed
     # Move bullets
     # Denne beveger kulene i riktig retining og sletter de når de forsvinner av skjermen. 
     for bullet in bullets[:]:
