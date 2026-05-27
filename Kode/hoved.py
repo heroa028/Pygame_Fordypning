@@ -3,6 +3,7 @@ import pygame
 import sys
 import math
 import random
+import os  # Brukes for å lese/skrive highscore filen
 
 #Loader inn "bibliotekene"
 pygame.init()
@@ -25,7 +26,6 @@ TEXT_COLOR = (255, 255, 255)
 BG_IMAGE = pygame.image.load("Bakgrunner/Bakgrunn_battle1.png").convert()
 
 # Denne loader defualt fonten i str 36
-
 font = pygame.font.SysFont(None, 36)
 
 #Enemies. 
@@ -34,7 +34,6 @@ wave = 1  # Wave setter hvilken wave man starter på.
 enemies_to_spawn = 8  # Enemies_to_spawn setter hvor mange som spawner på første wave (etter det blir det flere og flere (5+ wave nummer * 3))
 spawn_timer = 0  # spawn_timer teller hvor mange frames siden siste spawn
 SPAWN_INTERVAL = 60  # spawner en fiende hvert 60/60fps aka 1 sek
-
 
 # Player
 player_pos = [WIDTH // 2, HEIGHT // 2] #Dette er posisjonen spilleren spawner på
@@ -52,6 +51,30 @@ bullet_radius = 4 # radiusen på kulen
 
 # Variables
 Meny = True
+
+# Score variabler - score teller poeng denne runden, highscore er den beste noensinne
+score = 0
+HIGHSCORE_FILE = "highscore.txt"  # Filen highscoren lagres i
+
+# Laster inn highscoren fra filen hvis den finnes, ellers starter den på 0
+def load_highscore():
+    if os.path.exists(HIGHSCORE_FILE):
+        with open(HIGHSCORE_FILE, "r") as f:
+            try:
+                return int(f.read())
+            except:
+                return 0
+    return 0
+
+# Lagrer highscoren til filen hvis den nye scoren er høyere enn den gamle
+def save_highscore(new_score):
+    current = load_highscore()
+    if new_score > current:
+        with open(HIGHSCORE_FILE, "w") as f:
+            f.write(str(new_score))
+
+# Laster inn highscoren når spillet starter
+high_score = load_highscore()
 
 # Button class
  # Lagrer tekst og lager en rect for område til MENYEN
@@ -77,6 +100,7 @@ class Button:
             and event.button == 1
             and self.rect.collidepoint(event.pos)
         )
+
 # Her velger den en random del av kanten til skjermen. hver fiende/enemy har x og y verdi, radius og speed. 
 def spawn_enemy():
     side = random.choice(["top", "bottom", "left", "right"])
@@ -85,6 +109,7 @@ def spawn_enemy():
     if side == "left":   x, y = -20, random.randint(0, HEIGHT)
     if side == "right":  x, y = WIDTH + 20, random.randint(0, HEIGHT)
     enemies.append({"x": x, "y": y, "radius": 15, "speed": 2})
+
     # Denne kjører hver eneste frame og hvis det forsatt er noen fiender som må spawne så teller den hvor mange frames mellom hver spawn. den sjekker også om "Waven" er ferdig og hvis den er det lager den en ny kø med flere fiender for neste "wave"
 def wave_update():
     global enemies_to_spawn, spawn_timer, wave
@@ -98,7 +123,7 @@ def wave_update():
         wave += 1
         enemies_to_spawn = 5 + wave * 3
 
-# Flytter hver fiende mot spillerens posisjon. Denne kjører også hver eneste frame. .
+# Flytter hver fiende mot spillerens posisjon. Denne kjører også hver eneste frame. 
 def update_enemies():
     for e in enemies:
         dx = player_pos[0] - e["x"]
@@ -113,6 +138,25 @@ def update_enemies():
 def draw_enemies():
     for e in enemies:
         pygame.draw.circle(screen, (220, 50, 50), (int(e["x"]), int(e["y"])), e["radius"])
+
+# Sjekker om en kule treffer en fiende ved å måle avstanden mellom dem
+# Når en fiende dør får spilleren 10 poeng, og highscoren oppdateres hvis den slås
+def check_bullet_enemy_collision():
+    global score, high_score
+    for bullet in bullets[:]:
+        for e in enemies[:]:
+            dx = bullet["pos"][0] - e["x"]
+            dy = bullet["pos"][1] - e["y"]
+            dist = math.hypot(dx, dy)
+            # Hvis avstanden er mindre enn radiusen til kule + fiende har de kollidert
+            if dist < bullet_radius + e["radius"]:
+                bullets.remove(bullet)
+                enemies.remove(e)
+                score += 10  # Spilleren får 10 poeng per drept fiende
+                if score > high_score:  # Oppdaterer highscoren hvis scoren er høyere
+                    high_score = score
+                    save_highscore(high_score)
+                break  # Kula er allerede borte, ikke sjekk flere fiender for denne kula
 
 # Denne lager knapper på forskjellige "Kordinater" på siden med ulik bredde og høyde. (y,x,bredde,høyde)
 buttons = [
@@ -139,24 +183,26 @@ while True:
                         sys.exit()
                     if button.text == "Play":
                         Meny = False
-    if Meny == False:    
-        # Shoot bullet on mouse click
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:  # Left click
-                mouse_x, mouse_y = event.pos
-                dx = mouse_x - player_pos[0]
-                dy = mouse_y - player_pos[1]
-                distance = math.hypot(dx, dy)
-                if distance == 0:
-                    distance = 1
-                # Normalize direction
-                dx /= distance
-                dy /= distance
-                bullets.append({"pos": player_pos[:], "dir": (dx, dy)})
+                        score = 0  # Nullstiller scoren når man starter et nytt spill
 
+        if Meny == False:
+            # Shoot bullet on mouse click
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:  # Left click
+                    mouse_x, mouse_y = event.pos
+                    dx = mouse_x - player_pos[0]
+                    dy = mouse_y - player_pos[1]
+                    distance = math.hypot(dx, dy)
+                    if distance == 0:
+                        distance = 1
+                    # Normalize direction
+                    dx /= distance
+                    dy /= distance
+                    bullets.append({"pos": player_pos[:], "dir": (dx, dy)})
 
     # Keybinds
     # Sier seg selv litt men endrer x/y verdien når man klikker en viss tast 
+    if Meny == False:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
                 player_y -= speed
@@ -174,6 +220,7 @@ while True:
                 player_x += speed
         if keys[pygame.K_LEFT]:
                 player_x -= speed
+
     # Move bullets
     # Denne beveger kulene i riktig retining og sletter de når de forsvinner av skjermen. 
     for bullet in bullets[:]:
@@ -187,6 +234,7 @@ while True:
     
     wave_update()    # håndterer "spawningen" og "wave" systemet 
     update_enemies()  # Oppdaterer posisjonen til alle fiender
+    check_bullet_enemy_collision()  # Sjekker kollisjoner mellom kuler og fiender
 
     # Draw
     screen.fill(BG) # lager bakgrunnen med fargen (BG)
@@ -194,6 +242,10 @@ while True:
     if Meny:
         for button in buttons:
             button.draw(screen) # Lager meny knappene
+        # Viser highscoren på menyen nederst i midten
+        hs_surf = font.render(f"High Score: {high_score}", True, TEXT_COLOR)
+        hs_rect = hs_surf.get_rect(center=(WIDTH // 2, 430))
+        screen.blit(hs_surf, hs_rect)
 
     # Player
     if Meny == False:
@@ -202,6 +254,8 @@ while True:
         #Enemies
         font = pygame.font.SysFont(None, 36) # tegner teksten for hvilken wave det er / hvor mange fiender det er
         screen.blit(font.render(f"Wave {wave}  Enemies: {len(enemies)}", True, (255,255,255)), (10, 10))
+        # Viser nåværende score og highscore øverst til høyre
+        screen.blit(font.render(f"Score: {score}  Best: {high_score}", True, (255,255,255)), (WIDTH - 300, 10))
 
      # Denne holder spilleren på skjermen
     player_x = max(0, min(WIDTH - player_radius, player_x))
