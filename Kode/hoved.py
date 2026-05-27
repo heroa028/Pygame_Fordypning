@@ -23,7 +23,7 @@ BULLET_COLOR = (255, 50, 50)
 BUTTON_COLOR = (128, 0, 128)
 HOVER_COLOR = (100, 170, 220)
 TEXT_COLOR = (255, 255, 255)
-BG_IMAGE = pygame.image.load("Bakgrunner/Bakgrunn_battle1.png").convert()
+BG_IMAGE = pygame.image.load("Bakgrunner/Background.png").convert()
 
 # Denne loader defualt fonten i str 36
 font = pygame.font.SysFont(None, 36)
@@ -191,9 +191,9 @@ def check_player_enemy_collision():
 
 # Denne lager knapper på forskjellige "Kordinater" på siden med ulik bredde og høyde. (y,x,bredde,høyde)
 buttons = [
-    Button("Play", 600, 120, 300, 70),
-    Button("Options", 600, 220, 300, 70),
-    Button("Quit", 600, 320, 300, 70)
+    Button("Play", 570, 120, 300, 70),
+    Button("Options", 570, 220, 300, 70),
+    Button("Quit", 570, 320, 300, 70)
 ]
 
 # Knapper på Game Over skjermen
