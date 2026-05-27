@@ -28,6 +28,19 @@ Your goal is to eliminate as many zombies as possible without dying.
 
 You die by colliding with a zombie. 
 
+## All Keybinds 
+
+### Movement : 
+W A S D - Forward, left, backward, right
+
+Arrow keys - Up = forward , Down = backward , Right = right , Left = left
+### Menu : 
+Escape key - Opens menu
+
+Left mouse click - click buttons with this key
+### Shooting: 
+Left mouse click - Shoots bullets
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first
