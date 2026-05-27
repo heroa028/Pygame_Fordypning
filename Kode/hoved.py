@@ -27,6 +27,7 @@ BG_IMAGE = pygame.image.load("Bakgrunner/Bakgrunn_battle1.png").convert()
 
 # Denne loader defualt fonten i str 36
 font = pygame.font.SysFont(None, 36)
+font_big = pygame.font.SysFont(None, 100)  # Stor font til Game Over teksten
 
 #Enemies. 
 enemies = []
@@ -51,6 +52,7 @@ bullet_radius = 4 # radiusen på kulen
 
 # Variables
 Meny = True
+GameOver = False  # Holder styr på om spillet er over
 
 # Score variabler - score teller poeng denne runden, highscore er den beste noensinne
 score = 0
@@ -75,6 +77,23 @@ def save_highscore(new_score):
 
 # Laster inn highscoren når spillet starter
 high_score = load_highscore()
+
+# Nullstiller alt til startverdier slik at man kan spille på nytt fra menyen
+def reset_game():
+    global enemies, bullets, wave, enemies_to_spawn, spawn_timer
+    global player_x, player_y, player_pos, score, GameOver, Meny
+    enemies = []
+    bullets = []
+    wave = 1
+    enemies_to_spawn = 8
+    spawn_timer = 0
+    player_x = WIDTH // 2
+    player_y = HEIGHT // 2
+    player_pos[0] = WIDTH // 2
+    player_pos[1] = HEIGHT // 2
+    score = 0
+    GameOver = False
+    Meny = True
 
 # Button class
  # Lagrer tekst og lager en rect for område til MENYEN
@@ -158,11 +177,29 @@ def check_bullet_enemy_collision():
                     save_highscore(high_score)
                 break  # Kula er allerede borte, ikke sjekk flere fiender for denne kula
 
+# Sjekker om spilleren kolliderer med en fiende ved å måle avstanden mellom dem
+# Hvis de kolliderer settes GameOver til True og spillet stopper
+def check_player_enemy_collision():
+    global GameOver
+    for e in enemies:
+        dx = player_pos[0] - e["x"]
+        dy = player_pos[1] - e["y"]
+        dist = math.hypot(dx, dy)
+        # Hvis avstanden er mindre enn spillerens radius + fiendens radius har de truffet hverandre
+        if dist < player_radius + e["radius"]:
+            GameOver = True
+
 # Denne lager knapper på forskjellige "Kordinater" på siden med ulik bredde og høyde. (y,x,bredde,høyde)
 buttons = [
     Button("Play", 600, 120, 300, 70),
     Button("Options", 600, 220, 300, 70),
     Button("Quit", 600, 320, 300, 70)
+]
+
+# Knapper på Game Over skjermen
+gameover_buttons = [
+    Button("Meny", 570, 530, 300, 70),
+    Button("Quit", 570, 630, 300, 70)
 ]
 
 # Game loop
@@ -185,7 +222,17 @@ while True:
                         Meny = False
                         score = 0  # Nullstiller scoren når man starter et nytt spill
 
-        if Meny == False:
+        # Sjekker om man klikker på knappene på Game Over skjermen
+        if GameOver == True:
+            for button in gameover_buttons:
+                if button.clicked(event):
+                    if button.text == "Meny":
+                        reset_game()  # Nullstiller alt og sender spilleren tilbake til menyen
+                    if button.text == "Quit":
+                        pygame.quit()
+                        sys.exit()
+
+        if Meny == False and GameOver == False:
             # Shoot bullet on mouse click
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left click
@@ -202,7 +249,7 @@ while True:
 
     # Keybinds
     # Sier seg selv litt men endrer x/y verdien når man klikker en viss tast 
-    if Meny == False:
+    if Meny == False and GameOver == False:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
                 player_y -= speed
@@ -232,9 +279,12 @@ while True:
             bullet["pos"][1] < 0 or bullet["pos"][1] > HEIGHT):
             bullets.remove(bullet)
     
-    wave_update()    # håndterer "spawningen" og "wave" systemet 
-    update_enemies()  # Oppdaterer posisjonen til alle fiender
-    check_bullet_enemy_collision()  # Sjekker kollisjoner mellom kuler og fiender
+    # Oppdaterer kun spillet hvis man ikke er på menyen eller game over skjermen
+    if Meny == False and GameOver == False:
+        wave_update()    # håndterer "spawningen" og "wave" systemet 
+        update_enemies()  # Oppdaterer posisjonen til alle fiender
+        check_bullet_enemy_collision()  # Sjekker kollisjoner mellom kuler og fiender
+        check_player_enemy_collision()  # Sjekker om spilleren er truffet av en fiende
 
     # Draw
     screen.fill(BG) # lager bakgrunnen med fargen (BG)
@@ -248,7 +298,7 @@ while True:
         screen.blit(hs_surf, hs_rect)
 
     # Player
-    if Meny == False:
+    if Meny == False and GameOver == False:
         pygame.draw.circle(screen, PLAYER_COLOR, player_pos, player_radius) # Tegner spilleren
         draw_enemies()  # Tegner alle fiender
         #Enemies
@@ -257,13 +307,23 @@ while True:
         # Viser nåværende score og highscore øverst til høyre
         screen.blit(font.render(f"Score: {score}  Best: {high_score}", True, (255,255,255)), (WIDTH - 300, 10))
 
+    # Tegner Game Over skjermen med score, highscore og knapper
+    if GameOver == True:
+        go_surf = font_big.render("GAME OVER", True, (220, 50, 50))
+        go_rect = go_surf.get_rect(center=(WIDTH // 2, 300))
+        screen.blit(go_surf, go_rect)
+        screen.blit(font.render(f"Score: {score}", True, TEXT_COLOR),
+                    font.render(f"Score: {score}", True, TEXT_COLOR).get_rect(center=(WIDTH // 2, 420)))
+        screen.blit(font.render(f"High Score: {high_score}", True, TEXT_COLOR),
+                    font.render(f"High Score: {high_score}", True, TEXT_COLOR).get_rect(center=(WIDTH // 2, 465)))
+        for button in gameover_buttons:
+            button.draw(screen)  # Tegner Meny og Quit knappene
+
      # Denne holder spilleren på skjermen
     player_x = max(0, min(WIDTH - player_radius, player_x))
     player_y = max(0, min(HEIGHT - player_radius, player_y))
     player_pos[0] = player_x
     player_pos[1] = player_y
-
-    
 
     # Bullets
     for bullet in bullets:
