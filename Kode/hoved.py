@@ -127,7 +127,7 @@ def spawn_enemy():
     if side == "bottom": x, y = random.randint(0, WIDTH), HEIGHT + 20
     if side == "left":   x, y = -20, random.randint(0, HEIGHT)
     if side == "right":  x, y = WIDTH + 20, random.randint(0, HEIGHT)
-    enemies.append({"x": x, "y": y, "radius": 15, "speed": 4})
+    enemies.append({"x": x, "y": y, "radius": 15, "speed": 6})
 
     # Denne kjører hver eneste frame og hvis det forsatt er noen fiender som må spawne så teller den hvor mange frames mellom hver spawn. den sjekker også om "Waven" er ferdig og hvis den er det lager den en ny kø med flere fiender for neste "wave"
 def wave_update():
