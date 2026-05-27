@@ -22,6 +22,7 @@ BULLET_COLOR = (255, 50, 50)
 BUTTON_COLOR = (128, 0, 128)
 HOVER_COLOR = (100, 170, 220)
 TEXT_COLOR = (255, 255, 255)
+BG_IMAGE = pygame.image.load("Bakgrunner/Bakgrunn_battle1.png").convert()
 
 # Denne loader defualt fonten i str 36
 
@@ -83,6 +84,7 @@ def spawn_enemy():
     if side == "bottom": x, y = random.randint(0, WIDTH), HEIGHT + 20
     if side == "left":   x, y = -20, random.randint(0, HEIGHT)
     if side == "right":  x, y = WIDTH + 20, random.randint(0, HEIGHT)
+    enemies.append({"x": x, "y": y, "radius": 15, "speed": 2})
     # Denne kjører hver eneste frame og hvis det forsatt er noen fiender som må spawne så teller den hvor mange frames mellom hver spawn. den sjekker også om "Waven" er ferdig og hvis den er det lager den en ny kø med flere fiender for neste "wave"
 def wave_update():
     global enemies_to_spawn, spawn_timer, wave
@@ -188,6 +190,7 @@ while True:
 
     # Draw
     screen.fill(BG) # lager bakgrunnen med fargen (BG)
+    screen.blit(BG_IMAGE, (0,0))
     if Meny:
         for button in buttons:
             button.draw(screen) # Lager meny knappene
