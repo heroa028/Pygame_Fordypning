@@ -12,7 +12,7 @@ pygame.init()
 #Disse lager wdindowet på den satte resolusjonen, og setter caption og clock setter fpsen. 
 WIDTH, HEIGHT = 1440, 920
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Leo må rapes")
+pygame.display.set_caption("Z-urvival")
 clock = pygame.time.Clock()
 
 # Colors¨
@@ -127,7 +127,7 @@ def spawn_enemy():
     if side == "bottom": x, y = random.randint(0, WIDTH), HEIGHT + 20
     if side == "left":   x, y = -20, random.randint(0, HEIGHT)
     if side == "right":  x, y = WIDTH + 20, random.randint(0, HEIGHT)
-    enemies.append({"x": x, "y": y, "radius": 15, "speed": 2})
+    enemies.append({"x": x, "y": y, "radius": 15, "speed": 4})
 
     # Denne kjører hver eneste frame og hvis det forsatt er noen fiender som må spawne så teller den hvor mange frames mellom hver spawn. den sjekker også om "Waven" er ferdig og hvis den er det lager den en ny kø med flere fiender for neste "wave"
 def wave_update():
@@ -303,10 +303,10 @@ while True:
         pygame.draw.circle(screen, PLAYER_COLOR, player_pos, player_radius) # Tegner spilleren
         draw_enemies()  # Tegner alle fiender
         #Enemies
-        font = pygame.font.SysFont(None, 36) # tegner teksten for hvilken wave det er / hvor mange fiender det er
-        screen.blit(font.render(f"Wave {wave}  Enemies: {len(enemies)}", True, (255,255,255)), (10, 10))
+        font = pygame.font.SysFont(None, 50) # tegner teksten for hvilken wave det er / hvor mange fiender det er
+        screen.blit(font.render(f"Wave {wave}  Enemies: {len(enemies)}", True, (255,255,255)), (10, 20))
         # Viser nåværende score og highscore øverst til høyre
-        screen.blit(font.render(f"Score: {score}  Best: {high_score}", True, (255,255,255)), (WIDTH - 300, 10))
+        screen.blit(font.render(f"Score: {score}  Best: {high_score}", True, (255,255,255)), (WIDTH - 400, 20))
 
     # Tegner Game Over skjermen med score, highscore og knapper
     if GameOver == True:
