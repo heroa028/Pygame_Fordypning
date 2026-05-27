@@ -26,6 +26,8 @@ Use your mouse to click bullets to kill the zombies.
 
 Your goal is to eliminate as many zombies as possible without dying.
 
+You die by colliding with a zombie. 
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first
