@@ -98,7 +98,7 @@ def wave_update():
         wave += 1
         enemies_to_spawn = 5 + wave * 3
 
-# Flytter hver fiende mot spillerens posisjon. Denne kjører også hver eneste frame. 
+# Flytter hver fiende mot spillerens posisjon. Denne kjører også hver eneste frame. .
 def update_enemies():
     for e in enemies:
         dx = player_pos[0] - e["x"]
