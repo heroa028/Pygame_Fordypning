@@ -200,7 +200,7 @@ while True:
         font = pygame.font.SysFont(None, 36) # tegner teksten for hvilken wave det er / hvor mange fiender det er
         screen.blit(font.render(f"Wave {wave}  Enemies: {len(enemies)}", True, (255,255,255)), (10, 10))
 
-     # Keep square on screen
+     # Denne holder spilleren på skjermen
     player_x = max(0, min(WIDTH - player_radius, player_x))
     player_y = max(0, min(HEIGHT - player_radius, player_y))
     player_pos[0] = player_x
