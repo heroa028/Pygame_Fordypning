@@ -10,7 +10,7 @@ pygame.init()
 
 # Screen
 # Disse lager windowet på den satte resolusjonen, og setter caption og clock setter fpsen.
-WIDTH, HEIGHT = 1440, 920
+WIDTH, HEIGHT = 1440, 720
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Z-urvival")
 clock = pygame.time.Clock()
@@ -212,8 +212,7 @@ def check_player_enemy_collision():
 # Denne lager knapper på forskjellige koordinater på siden med ulik bredde og høyde (x, y, bredde, høyde)
 buttons = [
     Button("Play", 570, 120, 300, 70),
-    Button("Options", 570, 220, 300, 70),
-    Button("Quit", 570, 320, 300, 70)
+    Button("Quit", 570, 220, 300, 70)
 ]
 
 # Knapper på Game Over skjermen
