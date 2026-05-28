@@ -54,7 +54,7 @@ player = pygame.Rect(WIDTH // 2, HEIGHT // 2, player_radius * 2, player_radius *
 
 # Kule-liste
 bullets = []
-bullet_speed = 12  # Piksler per frame
+bullet_speed = 20     # Piksler per frame
 bullet_radius = 4  # Radiusen på kulen
 
 # Variabler
