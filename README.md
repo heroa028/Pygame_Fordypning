@@ -52,6 +52,19 @@ Please make sure to update tests as appropriate.
 
 [MIT](https://choosealicense.com/licenses/mit/)
 
-## Made by:
+## Credits:
 
+### Main creator:
 Henry aka @heroa028
+
+### ReadME template: 
+Kasper aka @kaloa017
+
+### Code examples: 
+The Hawk
+
+### Overall coding helper: 
+Uros aka @uros867
+
+### Brukertesting: 
+Leonhard aka @ladiesman182
