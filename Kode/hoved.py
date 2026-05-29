@@ -317,9 +317,9 @@ while True:
         screen.blit(hs_surf, hs_rect)
 
         # Tegner tittelteksten separat øverst på menyen
-        font = pygame.font.Font(None, 72) 
-        title_text = font.render("Z-urvival", True, (255, 255, 255))
-        screen.blit(title_text, (600, 30))
+        title_font = pygame.font.Font("Fonts/BrownieStencil-8O8MJ.ttf", 120)
+        title_text = title_font.render("Z-urvival", True, (255, 255, 255))
+        screen.blit(title_text, (480, 30))
 
     if Meny == False and GameOver == False:
         draw_player()   # Spiller-PNG, rotert mot musepekeren
