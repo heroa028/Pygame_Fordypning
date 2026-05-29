@@ -10,7 +10,7 @@ pygame.init()
 
 # Screen
 # Disse lager windowet på den satte resolusjonen, og setter caption og clock setter fpsen.
-WIDTH, HEIGHT = 1440, 720
+WIDTH, HEIGHT = 1400, 1220
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Z-urvival")
 clock = pygame.time.Clock()
@@ -211,8 +211,8 @@ def check_player_enemy_collision():
 
 # Denne lager knapper på forskjellige koordinater på siden med ulik bredde og høyde (x, y, bredde, høyde)
 buttons = [
-    Button("Play", 570, 120, 300, 70),
-    Button("Quit", 570, 220, 300, 70)
+    Button("Play", 570, 220, 300, 70),
+    Button("Quit", 570, 320, 300, 70)
 ]
 
 # Knapper på Game Over skjermen
@@ -269,15 +269,24 @@ while True:
     # Sier seg selv litt, men endrer x/y verdien når man klikker en viss tast
     if Meny == False and GameOver == False:
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_w]:      player_y -= speed
-        if keys[pygame.K_s]:      player_y += speed
-        if keys[pygame.K_d]:      player_x += speed
-        if keys[pygame.K_a]:      player_x -= speed
-        if keys[pygame.K_UP]:     player_y -= speed
-        if keys[pygame.K_DOWN]:   player_y += speed
-        if keys[pygame.K_RIGHT]:  player_x += speed
-        if keys[pygame.K_LEFT]:   player_x -= speed
-        if keys[pygame.K_ESCAPE]: Meny = True
+        if keys[pygame.K_w]:
+            player_y -= speed
+        if keys[pygame.K_s]:
+            player_y += speed
+        if keys[pygame.K_d]:
+            player_x += speed
+        if keys[pygame.K_a]:
+            player_x -= speed
+        if keys[pygame.K_UP]:
+            player_y -= speed
+        if keys[pygame.K_DOWN]:
+            player_y += speed
+        if keys[pygame.K_RIGHT]:
+            player_x += speed
+        if keys[pygame.K_LEFT]:
+            player_x -= speed
+        if keys[pygame.K_ESCAPE]:
+            Meny = True
 
     # Beveger kulene i riktig retning og sletter de når de forsvinner av skjermen
     for bullet in bullets[:]:
@@ -306,6 +315,11 @@ while True:
         hs_surf = font.render(f"High Score: {high_score}", True, TEXT_COLOR)
         hs_rect = hs_surf.get_rect(center=(WIDTH // 2, 430))
         screen.blit(hs_surf, hs_rect)
+
+        # Tegner tittelteksten separat øverst på menyen
+        font = pygame.font.Font(None, 72) 
+        title_text = font.render("Z-urvival", True, (255, 255, 255))
+        screen.blit(title_text, (600, 30))
 
     if Meny == False and GameOver == False:
         draw_player()   # Spiller-PNG, rotert mot musepekeren
